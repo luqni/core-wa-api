@@ -9,9 +9,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 // const db = require('./db'); // Koneksi ke database
 
-const chromium = require('chrome');
-const puppeteer = require('puppeteer-core');
-
 const app = express();
 const PORT = 3000;
 
@@ -54,7 +51,7 @@ function sessionExists(email) {
 }
 
 // Fungsi untuk membuat klien baru untuk setiap pengguna
-async function createClientForUser(email, res) {
+function createClientForUser(email, res) {
 
     const sanitizedEmail = sanitizeClientId(email); // Sanitize the email
 
@@ -62,13 +59,7 @@ async function createClientForUser(email, res) {
         authStrategy: new LocalAuth({
             clientId: sanitizedEmail,
             dataPath: path.join('/tmp', 'sessions')
-        }),
-
-        puppeteer: {
-            args: [...chromium.args],
-            executablePath: await chromium.executablePath,
-            headless: true, // Pastikan headless diatur ke true
-        },
+        })
     });
 
     let latestQr = null;
