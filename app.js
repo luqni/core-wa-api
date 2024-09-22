@@ -5,14 +5,14 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
-const jwt = require('jsonwebtoken'); // JWT package
-const bcrypt = require('bcryptjs'); // Bcrypt for hashing password
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const db = require('./db'); // Koneksi ke database
 
 const app = express();
 const PORT = 3000;
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; // Ganti dengan secret yang lebih kuat di .env
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 app.use(bodyParser.json());
 
@@ -36,6 +36,11 @@ function verifyApiSecret(req, res, next) {
     }
 }
 
+function sanitizeClientId(email) {
+    // Replace invalid characters with underscores or remove them
+    return email.replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
 // Menyimpan klien untuk setiap pengguna
 const clients = {};
 
@@ -47,9 +52,12 @@ function sessionExists(email) {
 
 // Fungsi untuk membuat klien baru untuk setiap pengguna
 function createClientForUser(email, res) {
+
+    const sanitizedEmail = sanitizeClientId(email); // Sanitize the email
+
     const client = new Client({
         authStrategy: new LocalAuth({
-            clientId: email,
+            clientId: sanitizedEmail,
             dataPath: path.join(__dirname, 'sessions')
         })
     });
@@ -102,6 +110,13 @@ function createClientForUser(email, res) {
     return client;
 }
 
+// Route untuk mengecek apakah sesi ada atau tidak
+app.post('/session-exists', (req, res) => {
+    const { email } = req.body;
+    const exists = sessionExists(email);
+    res.json({ status: exists ? 'Session exists' : 'Session does not exist' });
+});
+
 // Register Endpoint
 app.post('/register', (req, res) => {
     const { name, email, password } = req.body;
@@ -135,12 +150,10 @@ app.post('/login', (req, res) => {
         }
 
         const user = results[0];
-        console.log(user)
+
         // Verify password
         const passwordIsValid = bcrypt.compareSync(password, user.password);
         if (!passwordIsValid) {
-            console.log('email: ' + email)
-            console.log('password: ' + password)
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
@@ -149,10 +162,17 @@ app.post('/login', (req, res) => {
             expiresIn: '1h', // Token valid for 1 hour
         });
 
-        console.log('email: ' + email)
-        console.log('password: ' + password)
         res.json({ status: 'Login Successful', token });
     });
+});
+
+// Endpoint untuk membuat klien baru
+app.post('/create-client', verifyApiSecret, (req, res) => {
+    const { email } = req.body;
+    if (clients[email]) {
+        return res.status(200).json({ status: 'Client already exists' });
+    }
+    createClientForUser(email, res);
 });
 
 // Endpoint untuk mengirim pesan, dilindungi oleh JWT
@@ -173,6 +193,7 @@ app.post('/send-message', verifyApiSecret, (req, res) => {
     });
 });
 
+// Endpoint untuk validasi token
 app.get('/validate-token', verifyApiSecret, (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1]; // Bearer token
 
