@@ -46,7 +46,7 @@ const clients = {};
 
 // Fungsi untuk mengecek apakah sesi ada atau tidak
 function sessionExists(email) {
-    const sessionPath = path.join(__dirname, 'sessions', email);
+    const sessionPath = path.join(process.cwd(), 'sessions', email);
     return fs.existsSync(sessionPath);
 }
 
@@ -58,7 +58,7 @@ function createClientForUser(email, res) {
     const client = new Client({
         authStrategy: new LocalAuth({
             clientId: sanitizedEmail,
-            dataPath: path.join(__dirname, 'sessions')
+            dataPath: path.join(process.cwd(), 'sessions')
         })
     });
 
