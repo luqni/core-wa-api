@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 // const db = require('./db'); // Koneksi ke database
 
-const chromium = require('chrome-aws-lambda');
+const chromium = require('chrome');
 const puppeteer = require('puppeteer-core');
 
 const app = express();
