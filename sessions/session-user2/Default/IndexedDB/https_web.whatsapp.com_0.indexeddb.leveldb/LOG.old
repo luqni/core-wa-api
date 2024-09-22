@@ -1,0 +1,57 @@
+2024/09/01-14:50:12.147 685e Reusing MANIFEST /home/luqni/Lab/tes/wa-api/sessions/session-user2/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/09/01-14:50:12.147 685e Recovering log #271
+2024/09/01-14:50:12.150 685e Reusing old log /home/luqni/Lab/tes/wa-api/sessions/session-user2/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000271.log 
+2024/09/01-14:50:14.258 685e Compacting 1@0 + 0@1 files
+2024/09/01-14:50:15.471 685e Generated table #275@0: 24376 keys, 601433 bytes
+2024/09/01-14:50:15.471 685e Compacted 1@0 + 0@1 files => 601433 bytes
+2024/09/01-14:50:16.770 685e compacted to: files[ 0 1 10 0 0 0 0 ]
+2024/09/01-14:50:16.771 685e Delete type=2 #272
+2024/09/01-14:50:17.135 6864 Level-0 table #277: started
+2024/09/01-14:50:17.345 6864 Level-0 table #277: 32175 bytes OK
+2024/09/01-14:50:17.396 6864 Delete type=0 #271
+2024/09/01-14:50:17.396 6864 Manual compaction at level-0 from '\x00\x16\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x17\x00\x00\x00' @ 0 : 0; will stop at '\x00\x17\x00\x00\x05' @ 1417438 : 1
+2024/09/01-14:50:17.396 6864 Compacting 1@0 + 1@1 files
+2024/09/01-14:50:17.468 6864 Generated table #278@0: 25470 keys, 620438 bytes
+2024/09/01-14:50:17.502 6864 Generated table #279@0: 2 keys, 197 bytes
+2024/09/01-14:50:17.502 6864 Compacted 1@0 + 1@1 files => 620635 bytes
+2024/09/01-14:50:17.564 6864 compacted to: files[ 0 2 10 0 0 0 0 ]
+2024/09/01-14:50:17.565 6864 Delete type=2 #277
+2024/09/01-14:50:17.565 6864 Manual compaction at level-0 from '\x00\x17\x00\x00\x05' @ 1417438 : 1 .. '\x00\x17\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/09/01-14:50:17.569 685e Level-0 table #281: started
+2024/09/01-14:50:17.610 685e Level-0 table #281: 585 bytes OK
+2024/09/01-14:50:17.673 685e Delete type=2 #275
+2024/09/01-14:50:17.673 685e Delete type=0 #276
+2024/09/01-14:50:17.673 685e Manual compaction at level-0 from '\x00\x17\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x18\x00\x00\x00' @ 0 : 0; will stop at '\x00\x17\x00\x00\x05' @ 1417513 : 0
+2024/09/01-14:50:17.673 685e Compacting 1@0 + 2@1 files
+2024/09/01-14:50:17.740 685e Generated table #282@0: 25480 keys, 620559 bytes
+2024/09/01-14:50:17.740 685e Compacted 1@0 + 2@1 files => 620559 bytes
+2024/09/01-14:50:17.803 685e compacted to: files[ 0 1 10 0 0 0 0 ]
+2024/09/01-14:50:17.803 685e Delete type=2 #281
+2024/09/01-14:50:17.803 685e Manual compaction at level-0 from '\x00\x17\x00\x00\x05' @ 1417513 : 0 .. '\x00\x18\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/09/01-14:50:19.491 685e Compacting 1@1 + 10@2 files
+2024/09/01-14:50:21.168 685e Generated table #283@1: 44397 keys, 2204596 bytes
+2024/09/01-14:50:21.270 685e Generated table #284@1: 29175 keys, 2191502 bytes
+2024/09/01-14:50:21.359 685e Generated table #285@1: 3635 keys, 2161504 bytes
+2024/09/01-14:50:21.481 685e Generated table #286@1: 2747 keys, 2160552 bytes
+2024/09/01-14:50:21.555 685e Generated table #287@1: 3462 keys, 2162294 bytes
+2024/09/01-14:50:21.639 685e Generated table #288@1: 14355 keys, 2178471 bytes
+2024/09/01-14:50:21.735 685e Generated table #289@1: 27425 keys, 2262335 bytes
+2024/09/01-14:50:21.841 685e Generated table #290@1: 29386 keys, 2243867 bytes
+2024/09/01-14:50:21.937 685e Generated table #291@1: 42323 keys, 2218354 bytes
+2024/09/01-14:50:22.054 685e Generated table #292@1: 95563 keys, 2245100 bytes
+2024/09/01-14:50:22.105 685e Generated table #293@1: 8227 keys, 193688 bytes
+2024/09/01-14:50:22.105 685e Compacted 1@1 + 10@2 files => 22222263 bytes
+2024/09/01-14:50:22.155 685e compacted to: files[ 0 0 11 0 0 0 0 ]
+2024/09/01-14:50:22.155 685e Delete type=2 #278
+2024/09/01-14:50:22.155 685e Delete type=2 #263
+2024/09/01-14:50:22.155 685e Delete type=2 #264
+2024/09/01-14:50:22.155 685e Delete type=2 #268
+2024/09/01-14:50:22.155 685e Delete type=2 #262
+2024/09/01-14:50:22.155 685e Delete type=2 #265
+2024/09/01-14:50:22.155 685e Delete type=2 #267
+2024/09/01-14:50:22.155 685e Delete type=2 #282
+2024/09/01-14:50:22.155 685e Delete type=2 #273
+2024/09/01-14:50:22.155 685e Delete type=2 #270
+2024/09/01-14:50:22.155 685e Delete type=2 #266
+2024/09/01-14:50:22.156 685e Delete type=2 #269
+2024/09/01-14:50:22.156 685e Delete type=2 #279
