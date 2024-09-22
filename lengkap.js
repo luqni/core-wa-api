@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-// const db = require('./db'); // Koneksi ke database
+const db = require('./db'); // Koneksi ke database
 
 const app = express();
 const PORT = 3000;
@@ -138,42 +138,32 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    // db.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
-    //     if (err) {
-    //         console.error('Error during database query: ', err);
-    //         res.status(500).json({ error: 'Database query error' });
-    //         return;
-    //     }
+    db.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
+        if (err) {
+            console.error('Error during database query: ', err);
+            res.status(500).json({ error: 'Database query error' });
+            return;
+        }
 
-    //     if (results.length === 0) {
-    //         return res.status(401).json({ error: 'Invalid email or password' });
-    //     }
+        if (results.length === 0) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
 
-    //     const user = results[0];
+        const user = results[0];
 
-    //     // Verify password
-    //     const passwordIsValid = bcrypt.compareSync(password, user.password);
-    //     if (!passwordIsValid) {
-    //         return res.status(401).json({ error: 'Invalid email or password' });
-    //     }
+        // Verify password
+        const passwordIsValid = bcrypt.compareSync(password, user.password);
+        if (!passwordIsValid) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
 
-    //     // Create JWT token
-    //     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-    //         expiresIn: '1h', // Token valid for 1 hour
-    //     });
-
-    //     res.json({ status: 'Login Successful', token });
-    // });
-
-    if (email == 'admin@mail.com' && password == 'P@ssw0rdLuqni') {
-        const token = jwt.sign({ id: 1, email: email }, JWT_SECRET, {
+        // Create JWT token
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
             expiresIn: '1h', // Token valid for 1 hour
         });
 
         res.json({ status: 'Login Successful', token });
-    }
-
-
+    });
 });
 
 // Endpoint untuk membuat klien baru
