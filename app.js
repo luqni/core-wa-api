@@ -9,6 +9,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 // const db = require('./db'); // Koneksi ke database
 
+const chromium = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer-core');
+
 const app = express();
 const PORT = 3000;
 
@@ -52,14 +55,18 @@ function sessionExists(email) {
 
 // Fungsi untuk membuat klien baru untuk setiap pengguna
 function createClientForUser(email, res) {
-
-    const sanitizedEmail = sanitizeClientId(email); // Sanitize the email
+    const sanitizedEmail = sanitizeClientId(email);
 
     const client = new Client({
         authStrategy: new LocalAuth({
             clientId: sanitizedEmail,
-            dataPath: path.join('/tmp', 'sessions')
-        })
+            dataPath: path.join('/tmp', 'sessions'),
+        }),
+        puppeteer: {
+            args: [...chromium.args],
+            executablePath: async () => await chromium.executablePath,
+            headless: true,
+        },
     });
 
     let latestQr = null;
@@ -98,14 +105,6 @@ function createClientForUser(email, res) {
     });
 
     client.initialize();
-
-    if (latestQr) {
-        qrcode.toDataURL(latestQr, (err, url) => {
-            if (!err) {
-                res.json({ status: 'QR Code Regenerated', qrCodeUrl: url });
-            }
-        });
-    }
 
     return client;
 }
