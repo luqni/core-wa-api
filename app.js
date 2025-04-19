@@ -57,6 +57,8 @@ function sessionExists(email) {
 function createClientForUser(email, res) {
     const sanitizedEmail = sanitizeClientId(email);
 
+    const executablePath = await chromium.executablePath;
+
     const client = new Client({
         authStrategy: new LocalAuth({
             clientId: sanitizedEmail,
@@ -64,7 +66,7 @@ function createClientForUser(email, res) {
         }),
         puppeteer: {
             args: [...chromium.args],
-            executablePath: async () => await chromium.executablePath,
+            executablePath, // ✅ sudah berupa string
             headless: true,
         },
     });
