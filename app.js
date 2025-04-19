@@ -54,9 +54,8 @@ function sessionExists(email) {
 }
 
 // Fungsi untuk membuat klien baru untuk setiap pengguna
-function createClientForUser(email, res) {
+async function createClientForUser(email, res) {
     const sanitizedEmail = sanitizeClientId(email);
-
     const executablePath = await chromium.executablePath;
 
     const client = new Client({
@@ -65,8 +64,8 @@ function createClientForUser(email, res) {
             dataPath: path.join('/tmp', 'sessions'),
         }),
         puppeteer: {
-            args: [...chromium.args],
-            executablePath, // ✅ sudah berupa string
+            args: chromium.args,
+            executablePath,
             headless: true,
         },
     });
@@ -110,6 +109,7 @@ function createClientForUser(email, res) {
 
     return client;
 }
+
 
 // Route untuk mengecek apakah sesi ada atau tidak
 app.post('/session-exists', (req, res) => {
