@@ -19,21 +19,35 @@ app.use(bodyParser.json());
 // Middleware untuk memverifikasi API secret dan JWT token
 function verifyApiSecret(req, res, next) {
     const apiSecret = req.headers['x-api-secret'];
-    const token = req.headers['authorization']?.split(' ')[1]; // Bearer token
+    const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
 
-    if (apiSecret && apiSecret === process.env.API_SECRET) {
-        if (token) {
-            jwt.verify(token, JWT_SECRET, (err, user) => {
-                if (err) return res.status(403).json({ error: 'Invalid token' });
-                req.user = user;
-                next();
-            });
-        } else {
-            res.status(403).json({ error: 'Token required' });
-        }
-    } else {
-        res.status(403).json({ error: 'Forbidden: Invalid API Secret' });
+    if (!apiSecret || apiSecret !== process.env.API_SECRET) {
+        return res.status(403).json({ error: 'Forbidden: Invalid API Secret' });
     }
+
+    if (!token) {
+        return res.status(403).json({ error: 'Token required' });
+    }
+
+    // Verifikasi token valid dan belum expired di database
+    db.query('SELECT * FROM user_tokens WHERE token = ? AND expired_at > NOW()', [token], (err, results) => {
+        if (err) {
+            console.error('DB error:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(401).json({ error: 'Token expired or not found' });
+        }
+
+        // Verifikasi token dengan secret
+        jwt.verify(token, JWT_SECRET, (err, user) => {
+            if (err) return res.status(403).json({ error: 'Invalid token' });
+
+            req.user = user; // inject user data
+            next();
+        });
+    });
 }
 
 function sanitizeClientId(email) {
@@ -139,35 +153,46 @@ app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
     db.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
-        if (err) {
-            console.error('Error during database query: ', err);
-            res.status(500).json({ error: 'Database query error' });
-            return;
-        }
-
-        if (results.length === 0) {
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
+        if (err) return res.status(500).json({ error: 'Database query error' });
+        if (results.length === 0) return res.status(401).json({ error: 'Invalid email or password' });
 
         const user = results[0];
-
-        // Verify password
         const passwordIsValid = bcrypt.compareSync(password, user.password);
-        if (!passwordIsValid) {
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
+        if (!passwordIsValid) return res.status(401).json({ error: 'Invalid email or password' });
 
-        // Create JWT token
+        // Buat token dan expired_at
+        const expiresInSeconds = 3600;
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-            expiresIn: '1h', // Token valid for 1 hour
+            expiresIn: expiresInSeconds
         });
+        const expiredAt = new Date(Date.now() + expiresInSeconds * 1000);
 
-        res.json({ status: 'Login Successful', token });
+        // Simpan token ke database
+        db.query(
+            'INSERT INTO user_tokens (user_id, token, expired_at) VALUES (?, ?, ?)',
+            [user.id, token, expiredAt],
+            (insertErr) => {
+                if (insertErr) {
+                    console.error('Error saving token:', insertErr);
+                    return res.status(500).json({ error: 'Token storage error' });
+                }
+
+                res.json({ status: 'Login Successful', token });
+            }
+        );
     });
 });
 
 // Endpoint untuk membuat klien baru
 app.post('/create-client', verifyApiSecret, (req, res) => {
+    const { email } = req.body;
+    if (clients[email]) {
+        return res.status(200).json({ status: 'Client already exists' });
+    }
+    createClientForUser(email, res);
+});
+
+app.post('/create-client-without-token', (req, res) => {
     const { email } = req.body;
     if (clients[email]) {
         return res.status(200).json({ status: 'Client already exists' });
